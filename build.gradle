@@ -1,0 +1,165 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.tools.ant.filters.*
+plugins {
+  id "distribution"
+  id "com.palantir.docker" version "0.20.1"
+  id 'com.palantir.docker-compose' version "0.20.1"
+}
+
+ext {
+  interlokCoreVersion = '3.8.4-RELEASE'
+  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : 'latest'
+  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
+
+  repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'specify in gradle.properties'
+  repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'specify in gradle.properties'
+  defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
+  dockerImageName = project.hasProperty('dockerImageName') ? project.getProperty('dockerImageName') : "adaptrislabs/interlok-solace"
+
+  forceDockerTemplate=project.hasProperty("dockerBuild") ? project.getProperty("dockerBuild") : "true"
+  adapterSourceConfig = "${projectDir}/src/main/interlok/config"
+  adapterTmpConfigDirectory = "${buildDir}/tmp/config-resolve"
+
+  log4j2Version='2.11.2'
+  slf4jVersion='1.7.26'
+  solaceVersion='10.6.0'
+}
+
+distTar.enabled=false
+distZip.enabled=true
+
+repositories {
+  mavenCentral()
+  maven { url "$defaultNexusRepo" }
+  maven { url "$nexusBaseUrl/content/groups/public" }
+  maven { url "$nexusBaseUrl/content/groups/interlok" }
+  maven {
+      credentials {
+        username repoUsername
+        password repoPassword
+      }
+      url "$nexusBaseUrl/content/groups/private"
+  }
+}
+
+ext.hostname = { ->
+  if (forceDockerTemplate.equalsIgnoreCase("true")) {
+    return "docker"
+  }
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    return System.getenv("COMPUTERNAME")
+  }
+  return System.getenv("HOSTNAME")
+}
+
+def overwriteWithLocal(file, dir){
+  def localFile = "${dir}/${file}." + hostname()
+  if(new File(localFile).exists()){
+    ant.copy(file: localFile, tofile: "${dir}/${file}", overwrite: 'true', verbose: 'true')
+  }
+  delete fileTree(dir) { include "${file}.*" }
+}
+
+task localizeConfig(type: Copy) {
+  from "${adapterSourceConfig}"
+  into "${adapterTmpConfigDirectory}"
+  doLast {
+    overwriteWithLocal("variables.properties", "${adapterTmpConfigDirectory}")
+    overwriteWithLocal("log4j2.xml", "${adapterTmpConfigDirectory}")
+    overwriteWithLocal("license.properties", "${adapterTmpConfigDirectory}")
+  }
+}
+
+configurations {
+  war{}
+  interlokRuntime{}
+  all*.exclude group: 'c3p0'
+  all*.exclude group: 'commons-logging'
+  all*.exclude group: 'javamail'
+  all*.exclude group: 'javax.mail', module: 'mail'
+  all*.exclude group: 'org.glassfish.hk2.external'
+  all*.exclude group: 'xalan', module: 'xalan'
+  all*.exclude group: 'net.sf.saxon', module: 'saxon'
+  all*.exclude group: 'org.codehaus.woodstox'
+  all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.mail.glassfish'
+}
+
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+}
+
+dependencies {
+
+  interlokRuntime ("com.adaptris:interlok-solace:$interlokCoreVersion") { changing= true}
+  interlokRuntime ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
+  interlokRuntime ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
+  interlokRuntime ("com.adaptris:interlok-varsub:$interlokCoreVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-boot:$interlokCoreVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xinclude:$interlokCoreVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-logging:$interlokCoreVersion") { changing=true }
+  // XA included to avoid INTERLOK-2769
+  interlokRuntime ("com.adaptris:interlok-xa:$interlokCoreVersion") { 
+    changing=true 
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "org.slf4j", module: "jcl-over-slf4j"
+    exclude group: "org.slf4j", module: "jul-to-slf4j"
+  }
+
+  interlokRuntime ("com.solacesystems:sol-jms:$solaceVersion")
+  interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")
+  interlokRuntime ("com.solacesystems:sol-jcsmp:$solaceVersion")
+
+  interlokRuntime ("org.slf4j:slf4j-api:$slf4jVersion")
+  interlokRuntime ("org.slf4j:jcl-over-slf4j:$slf4jVersion")
+  interlokRuntime ("org.slf4j:jul-to-slf4j:$slf4jVersion")
+  interlokRuntime ("org.apache.logging.log4j:log4j-core:$log4j2Version")
+  interlokRuntime ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
+  interlokRuntime ("org.apache.logging.log4j:log4j-api:$log4j2Version")
+  interlokRuntime ("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
+  interlokRuntime ("org.fusesource.jansi:jansi:1.17.1")
+
+  war ("com.adaptris.ui:interlok:$interlokCoreVersion@war") {changing=true}
+}
+
+distZip {
+  archiveName="${project.name}.zip"
+}
+
+distributions {
+  main {
+    contents {
+      from {
+        "src/main/interlok"
+      }
+      into('lib') {
+        from(project.configurations.interlokRuntime)
+      }
+      into('webapps') {
+        from(project.configurations.war)
+      }
+      // ovewrite the config files with custom ones.
+      into('config') {
+        from(localizeConfig)
+      }
+      // Exclude the localized property files
+      exclude "**/*.properties.*"
+      exclude "config/variables.properties"
+      exclude "**/*.xml.*"
+      rename '(.*)-[0-9]+\\..*.jar', '$1.jar'
+      rename '(.*)-[0-9]+\\..*.war', '$1.war'
+      duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+  }
+}
+
+docker {
+  name dockerImageName
+  tags releaseVersion
+  pull true
+  files tasks.installDist.outputs
+}
+
+dockerCompose {
+  dockerComposeFile "docker-compose.yml"
+}
+

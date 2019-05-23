@@ -1,0 +1,93 @@
+<adapter>
+  <unique-id>${adapter.unique.id}</unique-id>
+  <shared-components>
+    <lifecycle-strategy class="filtered-shared-component-start">
+      <exclude>shared-solace-connection</exclude>
+    </lifecycle-strategy>
+    <connections>
+      <jms-connection>
+        <unique-id>shared-solace-connection</unique-id>
+        <user-name>${adapter.solace.user}</user-name>
+        <password>${adapter.solace.password}</password>
+        <vendor-implementation class="basic-solace-implementation">
+          <broker-url>${adapter.solace.url}</broker-url>
+          <message-vpn>default</message-vpn>
+        </vendor-implementation>      
+      </jms-connection>
+    </connections>
+  </shared-components>
+  <channel-list>
+    <channel>
+      <auto-start>false</auto-start>
+      <produce-connection class="jms-connection">
+        <user-name>${adapter.solace.user}</user-name>
+        <password>${adapter.solace.password}</password>
+        <vendor-implementation class="basic-solace-implementation">
+          <broker-url>${adapter.solace.url}</broker-url>
+          <message-vpn>default</message-vpn>
+        </vendor-implementation>
+      </produce-connection>
+      <workflow-list>
+        <standard-workflow>
+          <consumer class="polling-trigger">
+            <poller class="fixed-interval-poller">
+              <poll-interval>
+                <unit>SECONDS</unit>
+                <interval>10</interval>
+              </poll-interval>
+            </poller>
+            <message-provider class="static-polling-trigger-template">
+              <template><![CDATA[Some content.]]></template>
+            </message-provider>
+          </consumer>
+          <producer class="jms-producer">
+            <destination class="configured-destination">
+              <destination>jms:topic:Sample.T1</destination>
+            </destination>
+            <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
+            <message-translator class="text-message-translator">
+              <metadata-filter class="remove-all-metadata-filter"/>
+            </message-translator>
+            <delivery-mode>PERSISTENT</delivery-mode>
+            <session-factory class="jms-default-producer-session"/>
+          </producer>
+          <unique-id>Fixed_Interval_Send</unique-id>
+        </standard-workflow>
+      </workflow-list>
+      <unique-id>SEND_TO_SOLACE</unique-id>
+    </channel>
+    <channel>
+      <auto-start>false</auto-start>
+      <consume-connection class="shared-connection">
+        <lookup-name>shared-solace-connection</lookup-name>
+      </consume-connection>
+      <produce-connection class="shared-connection">
+        <lookup-name>shared-solace-connection</lookup-name>
+      </produce-connection>
+      <workflow-list>
+        <standard-workflow>
+          <consumer class="jms-consumer">
+            <destination class="configured-consume-destination">
+              <destination>jms:topic:Sample.T1</destination>
+            </destination>
+            <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
+            <message-translator class="auto-convert-message-translator"/>
+          </consumer>
+          <producer class="jms-producer">
+            <destination class="configured-destination">
+              <destination>jms:topic:Sample.T2</destination>
+            </destination>
+            <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
+            <message-translator class="text-message-translator">
+              <metadata-filter class="remove-all-metadata-filter"/>
+            </message-translator>
+            <delivery-mode>PERSISTENT</delivery-mode>
+            <session-factory class="jms-default-producer-session"/>
+          </producer>
+          <unique-id>T1 to T2</unique-id>
+        </standard-workflow>
+      </workflow-list>
+      <unique-id>BRIDGE</unique-id>
+    </channel>
+  </channel-list>
+</adapter>
