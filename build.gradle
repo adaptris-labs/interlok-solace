@@ -33,13 +33,6 @@ repositories {
   maven { url "$defaultNexusRepo" }
   maven { url "$nexusBaseUrl/content/groups/public" }
   maven { url "$nexusBaseUrl/content/groups/interlok" }
-  maven {
-      credentials {
-        username repoUsername
-        password repoPassword
-      }
-      url "$nexusBaseUrl/content/groups/private"
-  }
 }
 
 ext.hostname = { ->
