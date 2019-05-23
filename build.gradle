@@ -109,7 +109,7 @@ dependencies {
   interlokRuntime ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
   interlokRuntime ("org.apache.logging.log4j:log4j-api:$log4j2Version")
   interlokRuntime ("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
-  interlokRuntime ("org.fusesource.jansi:jansi:1.17.1")
+  interlokRuntime ("org.fusesource.jansi:jansi:1.18")
 
   war ("com.adaptris.ui:interlok:$interlokCoreVersion@war") {changing=true}
 }
