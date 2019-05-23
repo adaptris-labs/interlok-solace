@@ -3,6 +3,6 @@ adapter.unique.id=interlok-solace
 adapter.fs.base.url=${adapter.base.url}/fs/${adapter.unique.id}
 adapter.base.url=file\://localhost/${user.dir}
 
-adapter.solace.url=${SOLACE_HOST}:${SOLACE_PORT}
+adapter.solace.url=smf://${SOLACE_HOST}:${SOLACE_PORT}
 adapter.solace.user=${SOLACE_USER}
 adapter.solace.password=${SOLACE_PASSWORD}
