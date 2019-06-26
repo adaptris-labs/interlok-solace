@@ -7,7 +7,7 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = '3.8.4-RELEASE'
+  interlokCoreVersion = '3.9.0-RELEASE'
   releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : 'latest'
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
 
@@ -91,13 +91,8 @@ dependencies {
   interlokRuntime ("com.adaptris:interlok-boot:$interlokCoreVersion") { changing=true }
   interlokRuntime ("com.adaptris:interlok-xinclude:$interlokCoreVersion") { changing=true }
   interlokRuntime ("com.adaptris:interlok-logging:$interlokCoreVersion") { changing=true }
-  // XA included to avoid INTERLOK-2769
-  interlokRuntime ("com.adaptris:interlok-xa:$interlokCoreVersion") { 
-    changing=true 
-    exclude group: "org.slf4j", module: "slf4j-log4j12"
-    exclude group: "org.slf4j", module: "jcl-over-slf4j"
-    exclude group: "org.slf4j", module: "jul-to-slf4j"
-  }
+  interlokRuntime ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") { changing=true }
 
   interlokRuntime ("com.solacesystems:sol-jms:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")

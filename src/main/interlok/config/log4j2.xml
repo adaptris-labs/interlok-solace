@@ -48,6 +48,7 @@
     <Logger name="java.sql.DatabaseMetadata" level="WARN"/>
     <Logger name="java.util.TimerTask" level="WARN"/>
     <Logger name="org.eclipse.jetty" level="WARN"/>
+    <Logger name="org.reflections" level="ERROR"/>
     <Logger name="org.hibernate.cache" level="WARN"/>
     <Logger name="org.springframework.aop.framework.CglibAopProxy" level="ERROR"/>
     <Logger name="org.hibernate.cache.EhCacheProvider" level="ERROR"/>
@@ -64,6 +65,7 @@
     <Logger name="com.adaptris.transform.ff.Handler" level="INFO"/>
     <Logger name="com.adaptris.core.jms.MetadataHandler" level="DEBUG"/>
     <Logger name="com.adaptris.adaptergui" level="WARN"/>
+    <Logger name="com.adaptris.configapi" level="WARN"/>
     <Logger name="com.adaptris.core.marshaller.xstream" level="WARN"/>
     <Logger name="com.adaptris.core.util.LifecycleHelper" level="INFO"/>
     <Logger name="com.adaptris.adaptergui.util.ObjectConverter" level="FATAL"/>
