@@ -8,7 +8,7 @@ This is an complete interlok instance which basically show-cases interacting wit
 
 * You'll need java of course because gradle is the build system.
 * Docker of course
-* Get yourself a license, and make a file called `license.properties.docker` in _src/main/interlok/config
+* Get yourself a license, and make a file called `license-docker.properties` in _src/main/interlok/config
 ```
 adp.license.key=whatever-your-license-key-is
 ```
@@ -32,6 +32,6 @@ You can control some behaviour by passing in project properties in the form *-Pp
 
 Property Key | Default Value | Description | Notes
 ------------ | ------------- | ----------- | -----
-releaseVersion|latest|The docker tag version ||
+dockerImageTag|latest|The docker tag version ||
 dockerImageName|adaptrislabs/interlok-solace| The docker image name||
-buildEnv|docker|Change it to anything else to drive local properties from your hostname| This directly affects the way property files are sourced, by default it will be `variables.propertes.{buildEnv}`|
+buildEnv|docker|Your build environment| This directly affects the way property files are sourced, by default it will be `variables-.{buildEnv}.properties`|
