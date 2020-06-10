@@ -1,4 +1,4 @@
-# interlok-solace-demo
+# interlok-solace-interop [![Actions Status](https://github.com/adaptris-labs/interlok-solace-interop/workflows/check/badge.svg)](https://github.com/adaptris-labs/interlok-solace-interop/actions)
 
 ## What is this
 
