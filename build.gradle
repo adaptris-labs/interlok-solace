@@ -42,8 +42,9 @@ dependencies {
 docker {
   name dockerImageName
   tags dockerImageTag
+  copySpec.into("./build/distribution").from(installDist)
   pull true
-  files tasks.installDist.outputs
+  noCache true
 }
 
 dockerCompose {

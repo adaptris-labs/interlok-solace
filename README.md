@@ -8,7 +8,7 @@ This is an complete interlok instance which basically show-cases interacting wit
 
 * You'll need java of course because gradle is the build system.
 * Docker of course
-* Get yourself a license, and make a file called `license.properties.docker` in _src/main/interlok/config
+* Get yourself a license, and make a file called `license-docker.properties` in _src/main/interlok/config
 ```
 adp.license.key=whatever-your-license-key-is
 ```

@@ -1,10 +1,7 @@
-FROM adaptris/interlok:latest-zulu-alpine
+FROM adaptris/interlok-base:latest-zulu-alpine
 
-EXPOSE 8080
-EXPOSE 5555
+EXPOSE 8080 5555
 
-RUN rm -rf /opt/interlok/lib/adp-*.jar
-
-ADD lib /opt/interlok/lib
-ADD webapps /opt/interlok/webapps
-ADD config /opt/interlok/config
+COPY ./build/distribution/lib /opt/interlok/lib
+COPY ./build/distribution/webapps /opt/interlok/webapps
+COPY ./build/distribution/config /opt/interlok/config
