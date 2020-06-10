@@ -32,6 +32,6 @@ You can control some behaviour by passing in project properties in the form *-Pp
 
 Property Key | Default Value | Description | Notes
 ------------ | ------------- | ----------- | -----
-releaseVersion|latest|The docker tag version ||
+dockerImageTag|latest|The docker tag version ||
 dockerImageName|adaptrislabs/interlok-solace| The docker image name||
-buildEnv|docker|Change it to anything else to drive local properties from your hostname| This directly affects the way property files are sourced, by default it will be `variables.propertes.{buildEnv}`|
+buildEnv|docker|Your build environment| This directly affects the way property files are sourced, by default it will be `variables-.{buildEnv}.properties`|
