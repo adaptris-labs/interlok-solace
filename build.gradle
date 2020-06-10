@@ -1,13 +1,9 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-import org.apache.tools.ant.filters.*
 plugins {
-  id "distribution"
   id "com.palantir.docker" version "0.25.0"
   id 'com.palantir.docker-compose' version "0.25.0"
 }
 
 ext {
-  interlokCoreVersion = '3.10.1-RELEASE'
   interlokParentGradle = project.findProperty('interlokParentGradle') ?: 'https://raw.githubusercontent.com/adaptris-labs/interlok-build-parent/master/build.gradle'
   dockerImageName = project.findProperty('dockerImageName') ?: "adaptrislabs/interlok-solace"
   dockerImageTag = project.findProperty('dockerImageVersion') ?: "latest"
@@ -32,9 +28,9 @@ allprojects {
 }
 
 dependencies {
-  interlokRuntime ("com.adaptris:interlok-solace:$interlokCoreVersion") { changing= true}
-  interlokRuntime ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-solace:$interlokVersion") { changing= true}
+  interlokRuntime ("com.adaptris:interlok-xa-jms:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xa-solace:$interlokVersion") { changing=true }
 
   interlokRuntime ("com.solacesystems:sol-jms:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")
