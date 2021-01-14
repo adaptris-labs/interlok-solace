@@ -8,7 +8,7 @@ ext {
   dockerImageName = project.findProperty('dockerImageName') ?: "adaptrislabs/interlok-solace"
   dockerImageTag = project.findProperty('dockerImageVersion') ?: "latest"
   buildEnv=project.findProperty("buildEnv") ?: "docker"
-  solaceVersion='10.9.1'
+  solaceVersion='10.10.0'
   includeWar='true'
   // license-{buildEnv}.properties needs to be copied.
   additionalTemplatedProperties = [
