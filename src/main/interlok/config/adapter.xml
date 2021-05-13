@@ -12,7 +12,7 @@
         <vendor-implementation class="basic-solace-implementation">
           <broker-url>${adapter.solace.url}</broker-url>
           <message-vpn>default</message-vpn>
-        </vendor-implementation>      
+        </vendor-implementation>
       </jms-connection>
     </connections>
   </shared-components>
@@ -41,9 +41,7 @@
             </message-provider>
           </consumer>
           <producer class="jms-producer">
-            <destination class="configured-destination">
-              <destination>jms:topic:Sample.T1</destination>
-            </destination>
+            <endpoint>jms:topic:Sample.T1</endpoint>
             <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
             <message-translator class="text-message-translator">
               <metadata-filter class="remove-all-metadata-filter"/>
@@ -67,16 +65,12 @@
       <workflow-list>
         <standard-workflow>
           <consumer class="jms-consumer">
-            <destination class="configured-consume-destination">
-              <destination>jms:topic:Sample.T1</destination>
-            </destination>
+            <endpoint>jms:topic:Sample.T1</endpoint>
             <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
             <message-translator class="auto-convert-message-translator"/>
           </consumer>
           <producer class="jms-producer">
-            <destination class="configured-destination">
-              <destination>jms:topic:Sample.T2</destination>
-            </destination>
+            <endpoint>jms:topic:Sample.T2</endpoint>
             <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
             <message-translator class="text-message-translator">
               <metadata-filter class="remove-all-metadata-filter"/>
