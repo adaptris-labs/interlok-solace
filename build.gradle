@@ -36,7 +36,7 @@ dependencies {
   interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-jcsmp:$solaceVersion")
 
-  interlokRuntime ("org.fusesource.jansi:jansi:2.3.4")
+  interlokRuntime ("org.fusesource.jansi:jansi:2.4.0")
 }
 
 docker {
